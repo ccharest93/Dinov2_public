@@ -84,7 +84,7 @@ if __name__ == "__main__":
     version = "vit_large"
     extractor = LitDinov2HOOKS(version)
     prep_img, pil_img = extractor.preprocess(img_path)
-    layers = [extractor.model.depth-1] #list of layers we want to extract from
+    layers = [extractor.model.depth-1] #index of layers we want to extract from
     facets = [extractor.FACETS[4]] #list of FACETS we want to extract
     with torch.no_grad():
         outputs = extractor._extract_features(prep_img, layers, facets)
