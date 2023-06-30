@@ -1,5 +1,15 @@
 from torch import nn
 class PatchEmbedding(nn.Module):
+    """
+    2D image to patch embedding: (B,C,H,W) -> (B,N,D)
+    B: Batch size
+    C: Color channels
+    H: Height(pixels)
+    W: Width(pixels)
+    N: # of patches
+    D: Embedding dimension
+    """
+
     def __init__( self, img_size = 224, patch_size = 14, embed_dim = 768, norm_layer = None):
         super().__init__()
 

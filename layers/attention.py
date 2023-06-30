@@ -1,4 +1,7 @@
 from torch import nn
+from torch import Tensor
+from xformers.ops import memory_efficient_attention, unbind
+
 class Attention(nn.Module):
     def __init__(self, dim, num_heads, qkv_bias: bool = False, proj_bias: bool = True, attn_drop: float = 0.0, proj_drop: float = 0.0,
     ) -> None:
@@ -23,6 +26,20 @@ class Attention(nn.Module):
         attn = self.attn_drop(attn)
 
         x = (attn @ v).transpose(1, 2).reshape(B, N, C)
+        x = self.proj(x)
+        x = self.proj_drop(x)
+        return x
+
+class MemEffAttention(Attention):
+    def forward(self, x: Tensor, attn_bias=None) -> Tensor:
+        B, N, C = x.shape
+        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads)
+
+        q, k, v = unbind(qkv, 2)
+
+        x = memory_efficient_attention(q, k, v, attn_bias=attn_bias)
+        x = x.reshape([B, N, C])
+
         x = self.proj(x)
         x = self.proj_drop(x)
         return x

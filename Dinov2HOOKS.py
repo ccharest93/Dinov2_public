@@ -1,14 +1,14 @@
-from LitDinov2 import LitDinov2
+from Dinov2 import Dinov2
 import torch
 from torchvision import transforms
 from PIL import Image
 """
 Inspiration from https://github.com/ShirAmir/dino-vit-features
 """
-class LitDinov2HOOKS:
+class Dinov2HOOKS:
     FACETS = ['attn','key', 'query', 'value', 'token']
     def __init__(self, version = "vit_giant2"):
-        model = LitDinov2(version)
+        model = Dinov2(version)
         state_dict = model.load_weights()
         model.load_state_dict(state_dict, strict=False)
         model.eval()
@@ -82,7 +82,7 @@ class LitDinov2HOOKS:
 if __name__ == "__main__":
     img_path = "path/to/image"
     version = "vit_large"
-    extractor = LitDinov2HOOKS(version)
+    extractor = Dinov2HOOKS(version)
     prep_img, pil_img = extractor.preprocess(img_path)
     layers = [extractor.model.depth-1] #list of layers we want to extract from
     facets = [extractor.FACETS[4]] #list of FACETS we want to extract
